@@ -12,7 +12,7 @@ function Header({ loggedIn, logout, validateAccess }) {
 
       <li>
         <NavLink exact activeClassName="active" to="/fetch-single">
-          FetchSingle
+          Kontakt
         </NavLink>
       </li>
       {!loggedIn ? (

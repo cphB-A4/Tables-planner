@@ -7,7 +7,7 @@ function Home() {
         <Row className="rows">
           <Col xs={2} className="columns"></Col>
           <Col className="columns">
-            <h1 className="text-center mt-3">Fetch data from random API's!</h1>
+            <h1 className="text-center mt-3">Tables Planner</h1>
             <br></br>
             <h3>
               <strong>Functionalities</strong>

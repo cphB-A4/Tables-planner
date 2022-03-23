@@ -1,8 +1,6 @@
 import jwt_decode from "jwt-decode";
 import { URL } from "./Settings";
 
-
-//URL = "https://www.theagns.com/CA2-Backend";
 function handleHttpErrors(res) {
   if (!res.ok) {
     return Promise.reject({ status: res.status, fullError: res.json() });
@@ -47,7 +45,7 @@ function apiFacade() {
   };
 
   const login = (user, password) => {
-    /*TODO*/
+  
     const options = makeOptions("POST", true, {
       username: user,
       password: password,
@@ -67,28 +65,8 @@ const registerUser = (registerCredentials) => {
        .then((res) => {});
    }
 
-  const fetchData = () => {
-    const options = makeOptions("GET", true); //True add's the token
-    return fetch(URL + "/api/info/user", options).then(handleHttpErrors);
-  };
 
-  //Fetches from one endpoint. Only 1 external api call.
-  const fetchSingleData = () => {
-    const options = makeOptions("GET", true); //True add's the token
-    return fetch(URL + "/api/info/fetchSingle", options).then(handleHttpErrors);
-  };
-  //Fetches from one endpoint. 4 external api call.
-  const fetchAlotData = () => {
-    const options = makeOptions("GET", true); //True add's the token
-    return fetch(URL + "/api/info/fetchSeq", options).then(handleHttpErrors);
-  };
-
-  const fetchAlotDataParallel = () => {
-    const options = makeOptions("GET", true); //True add's the token
-    return fetch(URL + "/api/info/fetchParallel", options).then(
-      handleHttpErrors
-    );
-  };
+ 
   const makeOptions = (method, addToken, body) => {
     var opts = {
       method: method,
@@ -114,10 +92,6 @@ const registerUser = (registerCredentials) => {
     loggedIn,
     login,
     logout,
-    fetchData,
-    fetchSingleData,
-    fetchAlotData,
-    fetchAlotDataParallel,
     validateAccess,
     handleError,
     registerUser
