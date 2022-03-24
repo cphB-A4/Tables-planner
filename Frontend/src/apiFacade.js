@@ -65,6 +65,14 @@ const registerUser = (registerCredentials) => {
        .then((res) => {});
    }
 
+const createEvent = (eventDetails) => {
+  const options = makeOptions("POST", true, eventDetails);
+  console.log(eventDetails);
+   return fetch(URL + "/api/create-event", options)
+     .then(handleHttpErrors)
+     .then((res) => {});
+}
+
 
  
   const makeOptions = (method, addToken, body) => {
@@ -94,7 +102,8 @@ const registerUser = (registerCredentials) => {
     logout,
     validateAccess,
     handleError,
-    registerUser
+    registerUser,
+    createEvent
   };
 }
 const facade = apiFacade();
