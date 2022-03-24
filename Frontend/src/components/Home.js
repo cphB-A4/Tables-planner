@@ -1,12 +1,41 @@
 import { Col, Container, Row, Form, Button } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HowToUse from "../helper/howToUse";
 import facade from "../apiFacade";
+import EventTable from "./EventTable";
 function Home() {
 
+  const defaultEvents = [];
+
   const [event, setEvent] = useState(null);
+   const [eventsToShow, setEventsToShow] = useState(null);
+  const [eventId, setEventId] = useState(-1);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [events, setEvents] = useState(...[defaultEvents]);
+  
+
+ useEffect(() => {
+        facade
+          .getAllEventsByUser()
+          .then((res) => {
+               
+            setEventsToShow(res);
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+            if (err.status) {
+              err.fullError.then((e) => {
+                console.log(e.code + ": " + e.message);
+                setSuccess(false);
+                setError(e.message);
+              });
+            } else {
+              console.log("Network error");
+            }
+          });
+        })
 
 
   const onChange = (evt) => {
@@ -65,13 +94,13 @@ function Home() {
           name="time"
         />
 
-        <button
-          onClick={handleSubmit}
-          className="btn btn-dark btn-space mt-3"
-        >
+        <button onClick={handleSubmit} className="btn btn-dark btn-space mt-3">
           Create Event
         </button>
       </Form>
+      {eventsToShow !== null ? (
+        <EventTable list={eventsToShow} setEventId={setEventId} />
+        ) : ("")}
     </>
   );
 }
