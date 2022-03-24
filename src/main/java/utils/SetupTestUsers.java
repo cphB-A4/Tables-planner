@@ -27,7 +27,9 @@ populateTestUsers();
     User user = new User("user", "test1");
     User admin = new User("admin", "test2");
     User both = new User("user_admin", "test3");
-    Event event = new Event("Hey", "Ayudi", "2022-03-24-12-00");
+    User tester = new User("Test", "1234");
+    user.addEvent(new Event("Hey", "Ayudi", "2022-03-24-12-00"));
+    //Event event = new Event(tester,"Hey", "Ayudi", "2022-03-24-12-00");
     User testUser = new User("testUser","test1");
 
 
@@ -49,7 +51,8 @@ populateTestUsers();
     em.persist(user);
     em.persist(admin);
     em.persist(both);
-    em.persist(event);
+    //em.persist(tester);
+    //em.persist(event);
     em.persist(testUser);
     em.getTransaction().commit();
     //System.out.println("PW: " + user.getUserPass());

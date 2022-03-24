@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 
 @Path("user")
@@ -40,14 +41,32 @@ public class UserResource {
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("get-all-events-by-user")
+    public String getEventByUser() {
+            String thisUser = securityContext.getUserPrincipal().getName();
+            List<EventDTO> events = userFacade.getAllEventsByUsername(thisUser);
+            return gson.toJson(events);
+    }
+
     //
     @POST
     @Path("create-event")
     @Produces(MediaType.APPLICATION_JSON)
     //@RolesAllowed()
     public String createEvent(String jsonEvent) {
-        EventDTO eventDTO = gson.fromJson(jsonEvent, EventDTO.class);
-        EventDTO newEventDTO = userFacade.createEvent(eventDTO);
-        return gson.toJson(newEventDTO);
+        String thisUser;
+        try {
+            thisUser = securityContext.getUserPrincipal().getName();
+            EventDTO eventDTO = gson.fromJson(jsonEvent, EventDTO.class);
+            EventDTO newEventDTO = userFacade.createEvent(eventDTO, thisUser);
+            return gson.toJson(newEventDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
+        }
     }
+
+
+
 }

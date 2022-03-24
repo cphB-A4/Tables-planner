@@ -15,17 +15,35 @@ public class Event {
     private String title;
     private String time;
 
+    @ManyToOne
+    private User user;//ændring
 
     public String getId() {
         return id;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Event(User user, String description, String title, String time) {
+        this.user = user;//ændring
+        this.id = UUID.randomUUID().toString();
+        this.description = description;
+        this.title = title;
+        this.time = time;
+    }
     public Event(String description, String title, String time) {
         this.id = UUID.randomUUID().toString();
         this.description = description;
         this.title = title;
         this.time = time;
     }
+
 
     public String getTime() {
         return time;

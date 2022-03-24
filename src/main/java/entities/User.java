@@ -36,6 +36,8 @@ public class User implements Serializable {
   private int birthYear;
   private double balance;
 
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+  private List<Event> eventList = new ArrayList<>();
 
   public List<String> getRolesAsStrings() {
     if (roleList.isEmpty()) {
@@ -68,6 +70,12 @@ public class User implements Serializable {
     this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
   }
 
+  public void addEvent(Event event) {
+    if (event != null) {
+      event.setUser(this);
+      this.eventList.add(event);
+    }
+  }
 
 
   public void addRole(Role userRole) {
