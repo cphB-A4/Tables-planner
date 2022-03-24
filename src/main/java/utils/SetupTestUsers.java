@@ -27,7 +27,7 @@ populateTestUsers();
     User user = new User("user", "test1");
     User admin = new User("admin", "test2");
     User both = new User("user_admin", "test3");
-
+    Event event = new Event("Hey", "Ayudi");
     User testUser = new User("testUser","test1");
 
 
@@ -49,6 +49,7 @@ populateTestUsers();
     em.persist(user);
     em.persist(admin);
     em.persist(both);
+    em.persist(event);
     em.persist(testUser);
     em.getTransaction().commit();
     //System.out.println("PW: " + user.getUserPass());
