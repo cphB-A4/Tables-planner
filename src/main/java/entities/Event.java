@@ -1,6 +1,8 @@
 package entities;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Table(name = "event")
@@ -11,19 +13,31 @@ public class Event {
 
     private String description;
     private String title;
+    private String time;
+
 
     public String getId() {
         return id;
     }
 
-    public Event(String description, String title) {
+    public Event(String description, String title, String time) {
         this.id = UUID.randomUUID().toString();
         this.description = description;
         this.title = title;
+        this.time = time;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public Event() {
     }
+
 
 
     public String getDescription() {
