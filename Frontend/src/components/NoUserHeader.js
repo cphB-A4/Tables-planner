@@ -66,10 +66,15 @@ const [showRegisterError, setShowRegisterError] = useState(false);
         <Route exact path="/">
           <Container>
             <Row className="rows">
-              <Col sm={5} className="columns main-left">
-                <h1 className="text-center mt-3">Exam</h1>
-                <p>Skriv din beskrivelse her. Add evt billede</p>
-              </Col>
+              <div className="text-center">
+                <h1 className="text-center">Tables-planner</h1>
+                <p>Web app for creating table plans</p>
+                <h4>Paste event ID here</h4>
+                <Form.Group className="mb-3">
+                  <Form.Label>Paste event ID here</Form.Label>
+                  <Form.Control placeholder="Enter event id" id="event-id" />
+                </Form.Group>
+              </div>
               <Col className="columns login-form">
                 <h1 className="text-center">Login</h1>
                 <Form onChange={onChange}>
@@ -115,7 +120,7 @@ const [showRegisterError, setShowRegisterError] = useState(false);
               <Col xs={2} className="columns"></Col>
             </Row>
           </Container>
-          
+
           {toggle ? (
             <Container>
               <Row className="rows">
