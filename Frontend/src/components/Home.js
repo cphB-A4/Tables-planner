@@ -35,7 +35,7 @@ function Home() {
               console.log("Network error");
             }
           });
-        })
+        },[]);
 
 
   const onChange = (evt) => {
@@ -88,13 +88,13 @@ function Home() {
 
         <label for="time">Date & Time</label>
         <input
-          class="form-control"
+          className="form-control"
           type="datetime-local"
           id="time"
           name="time"
         />
 
-        <button onClick={handleSubmit} className="btn btn-dark btn-space mt-3">
+        <button onClick={handleSubmit} className="btn btn-dark btn-space mt-3 mb-3">
           Create Event
         </button>
       </Form>

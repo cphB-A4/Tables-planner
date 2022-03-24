@@ -68,17 +68,15 @@ const registerUser = (registerCredentials) => {
 const createEvent = (eventDetails) => {
   const options = makeOptions("POST", true, eventDetails);
   console.log(eventDetails);
-   return fetch(URL + "/api/user/create-event", options)
-     .then(handleHttpErrors)
-     .then((res) => {});
+   return fetch(URL + "/api/user/createEvent", options)
+     .then(handleHttpErrors);
 }
 
-const getAllEventsByUser = (eventDetails) => {
-  const options = makeOptions("GET", true, eventDetails);
-  console.log(eventDetails);
+const getAllEventsByUser = () => {
+  const options = makeOptions("GET", true);
+  
   return fetch(URL + "/api/user/get-all-events-by-user", options)
     .then(handleHttpErrors)
-    .then((res) => {});
 }
 
 

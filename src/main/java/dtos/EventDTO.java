@@ -23,7 +23,7 @@ public class EventDTO {
 
     public EventDTO(Event event){
         this.id = event.getId();
-        this.user = event.getUser();
+        //this.user = event.getUser(); // No need for this --> StackOverflowError
         this.description = event.getDescription();
         this.title = event.getTitle();
         this.time = event.getTime();

@@ -21,8 +21,8 @@ import java.util.List;
 @Path("user")
 public class UserResource {
     
-    private EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
-    private final UserFacade userFacade = UserFacade.getUserFacade(EMF);
+    private static EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
+    private final static UserFacade userFacade = UserFacade.getUserFacade(EMF);
     private final AllFacade allFacade = AllFacade.getAllFacade(EMF);
     private final AdminFacade adminFacade = AdminFacade.getAdminFacade(EMF);
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -31,6 +31,15 @@ public class UserResource {
 
     @Context
     SecurityContext securityContext;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("user")
+    @RolesAllowed("user")
+    public String getFromuser() {
+        String thisuser = securityContext.getUserPrincipal().getName();
+        return "{\"msg\": \"Hello to (User) User: " + thisuser + "\"}";
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -44,6 +53,7 @@ public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("get-all-events-by-user")
+    @RolesAllowed("user")
     public String getEventByUser() {
             String thisUser = securityContext.getUserPrincipal().getName();
             List<EventDTO> events = userFacade.getAllEventsByUsername(thisUser);
@@ -52,10 +62,11 @@ public class UserResource {
 
     //
     @POST
-    @Path("create-event")
+    @Path("createEvent")
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed()
+    @RolesAllowed("user")
     public String createEvent(String jsonEvent) {
+        System.out.println(jsonEvent);
         String thisUser;
         try {
             thisUser = securityContext.getUserPrincipal().getName();
