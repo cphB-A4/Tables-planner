@@ -65,6 +65,22 @@ const registerUser = (registerCredentials) => {
        .then((res) => {});
    }
 
+const createEvent = (eventDetails) => {
+  const options = makeOptions("POST", true, eventDetails);
+  console.log(eventDetails);
+   return fetch(URL + "/api/user/create-event", options)
+     .then(handleHttpErrors)
+     .then((res) => {});
+}
+
+const getAllEventsByUser = (eventDetails) => {
+  const options = makeOptions("GET", true, eventDetails);
+  console.log(eventDetails);
+  return fetch(URL + "/api/user/get-all-events-by-user", options)
+    .then(handleHttpErrors)
+    .then((res) => {});
+}
+
 
  
   const makeOptions = (method, addToken, body) => {
@@ -94,7 +110,9 @@ const registerUser = (registerCredentials) => {
     logout,
     validateAccess,
     handleError,
-    registerUser
+    registerUser,
+    createEvent,
+    getAllEventsByUser
   };
 }
 const facade = apiFacade();
