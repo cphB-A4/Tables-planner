@@ -86,7 +86,7 @@ function Home() {
           </Form.Group>
         </Row>
 
-        <label for="time">Date & Time</label>
+        <label>Date & Time</label>
         <input
           className="form-control"
           type="datetime-local"

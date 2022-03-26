@@ -11,7 +11,7 @@ function Header({ loggedIn, logout, validateAccess }) {
       </li>
 
       <li>
-        <NavLink exact activeClassName="active" to="/fetch-single">
+        <NavLink exact activeClassName="active" to="/contact">
           Kontakt
         </NavLink>
       </li>
@@ -25,8 +25,8 @@ function Header({ loggedIn, logout, validateAccess }) {
         <>
           {validateAccess === "user" ? (
             <li>
-              <NavLink exact activeClassName="active" to="/fetch-sequentially">
-                Fetch sequentially
+              <NavLink exact activeClassName="active" to="/edit-event">
+                Edit Event
               </NavLink>
             </li>
           ) : (

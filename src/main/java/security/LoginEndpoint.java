@@ -1,6 +1,7 @@
 package security;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.nimbusds.jose.JOSEException;
@@ -55,6 +56,11 @@ public class LoginEndpoint {
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", username);
             responseJson.addProperty("token", token);
+            Gson gson = new Gson();
+            String data = gson.toJson(user.getRolesAsStrings());
+            JsonArray jsonArray = new JsonParser().parse(data).getAsJsonArray();
+            responseJson.add("roles", jsonArray);
+            //System.out.println("roles " + user.getRolesAsStrings());
             return Response.ok(new Gson().toJson(responseJson)).build();
 
         } catch (JOSEException | AuthenticationException ex) {
