@@ -40,20 +40,23 @@ public class RegisterEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public String registerUser(String userJSON) throws API_Exception {
         EntityManager em = EMF.createEntityManager();
+        System.out.println(userJSON);
         User userFromDB;
         String username;
         String password;
+        String email;
         try {
             JsonObject json = JsonParser.parseString(userJSON).getAsJsonObject();
-            username = json.get("newUsername").getAsString();
-            password = json.get("newPassword").getAsString();
+            username = json.get("username").getAsString();
+            password = json.get("password").getAsString();
+            email = json.get("email").getAsString();
 
         } catch (Exception e) {
             throw new API_Exception("Malformed JSON Suplied", 400, e);
         }
         userFromDB = em.find(User.class, username);
         if (userFromDB == null) {
-            User user = new User(username, password);
+            User user = new User(username, password, email);
             em.getTransaction().begin();
             Role userRole = new Role("user");//ikke markeret CASCADE PERSIST
             user.addRole(userRole);

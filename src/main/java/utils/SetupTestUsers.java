@@ -24,9 +24,9 @@ populateTestUsers();
     // Also, either delete this file, when users are created or rename and add to .gitignore
     // Whatever you do DO NOT COMMIT and PUSH with the real passwords
 
-    User user = new User("user", "test1");
-    User admin = new User("admin", "test2");
-    User both = new User("user_admin", "test3");
+    User user = new User("user", "test1", "test1@gmail.com");
+    User admin = new User("admin", "test2", "test2@gmail.com");
+    User both = new User("user_admin", "test3", "test3@gmail.com");
     User tester = new User("Test", "1234");
     user.addEvent(new Event("Hey", "Ayudi", "2022-03-24-12-00"));
     //Event event = new Event(tester,"Hey", "Ayudi", "2022-03-24-12-00");

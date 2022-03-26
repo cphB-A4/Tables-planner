@@ -64,6 +64,12 @@ public class User implements Serializable {
   public boolean verifyPassword(String pw){
     return BCrypt.checkpw(pw, userPass);
   }
+  public User(String userName, String userPass, String email) {
+    this.userName = userName;
+    this.email = email;
+    this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
+  }
+
   public User(String userName, String userPass) {
     this.userName = userName;
 
