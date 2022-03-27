@@ -3,6 +3,8 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.EventDTO;
+import dtos.PersonDTO;
+import dtos.TablesDTO;
 import facades.AdminFacade;
 import facades.AllFacade;
 import facades.UserFacade;
@@ -69,15 +71,58 @@ public class UserResource {
         System.out.println(jsonEvent);
         String thisUser;
         try {
+            //if event.user_user_name == securityContext.getUserPrincipal().getName();
             thisUser = securityContext.getUserPrincipal().getName();
-            EventDTO eventDTO = gson.fromJson(jsonEvent, EventDTO.class);
-            EventDTO newEventDTO = userFacade.createEvent(eventDTO, thisUser);
-            return gson.toJson(newEventDTO);
+            EventDTO eventDTO = userFacade.createEvent(gson.fromJson(jsonEvent, EventDTO.class), thisUser);
+            return gson.toJson(eventDTO);
         } catch (WebApplicationException ex) {
             throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
         }
     }
 
+    @POST
+    @Path("createTable/{eventId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public String createTable(@PathParam("eventId") String eventId, String jsonTable) {
+        System.out.println(jsonTable);
+        String thisUser;
+        try {
+            thisUser = securityContext.getUserPrincipal().getName();
+            TablesDTO tablesDTO = userFacade.createTable(gson.fromJson(jsonTable, TablesDTO.class), eventId, thisUser);
+            return gson.toJson(tablesDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
+        }
+    }
 
-
+    @POST
+    @Path("createPerson/{tableId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("user")
+    public String createPerson(@PathParam("tableId") String tableId, String jsonPerson) {
+        System.out.println(jsonPerson);
+        String thisUser;
+        try {
+            thisUser = securityContext.getUserPrincipal().getName();
+            PersonDTO personDTO = userFacade.createPerson(gson.fromJson(jsonPerson, PersonDTO.class), tableId, thisUser);
+            return gson.toJson(personDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
+        }
+    }
+    @Path("deletePerson/{id}")
+    @RolesAllowed("user")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String delete(@PathParam("id") int personId) {
+        String thisUser;
+        try {
+            thisUser = securityContext.getUserPrincipal().getName();
+            PersonDTO personDTO = userFacade.deletePerson(personId, thisUser);
+            return gson.toJson(personDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
+        }
+    }
 }
