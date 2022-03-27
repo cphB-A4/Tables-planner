@@ -28,7 +28,10 @@ populateTestUsers();
     User admin = new User("admin", "test2", "test2@gmail.com");
     User both = new User("user_admin", "test3", "test3@gmail.com");
     User tester = new User("Test", "1234");
-    user.addEvent(new Event("Hey", "Ayudi", "2022-03-24-12-00"));
+    Event event = new Event("Hey", "Ayudi", "2022-03-24-12-00");
+    Tables table = new Tables(2, "round");
+    event.addTable(table);
+    user.addEvent(event);
     //Event event = new Event(tester,"Hey", "Ayudi", "2022-03-24-12-00");
     User testUser = new User("testUser","test1");
 

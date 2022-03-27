@@ -11,6 +11,8 @@ public class Tables {
     private Integer id;
     private int size;
     private String shape;
+    @ManyToOne
+    private Event event;
 
     public Tables(int size, String shape) {
         this.size = size;
@@ -42,5 +44,13 @@ public class Tables {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }
