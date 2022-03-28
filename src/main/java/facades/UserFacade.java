@@ -62,6 +62,7 @@ public class UserFacade {
     public EventDTO createEvent(EventDTO eventDTO, String username){
         EntityManager em = emf.createEntityManager();
         User user;
+        Event getEvent;
         try {
             user = em.find(User.class,username);
         } catch (WebApplicationException e){
@@ -72,7 +73,7 @@ public class UserFacade {
             throw new WebApplicationException("Have you filled out all the forms?", 400);
         }
         try {
-            Event getEvent = new Event(eventDTO.getUser(), eventDTO.getDescription(), eventDTO.getTitle(), eventDTO.getTime());
+            getEvent = new Event(eventDTO.getUser(), eventDTO.getDescription(), eventDTO.getTitle(), eventDTO.getTime());
             em.getTransaction().begin();
             user.addEvent(getEvent);
             em.merge(user);
@@ -83,7 +84,7 @@ public class UserFacade {
             em.close();
         }
 
-        return new EventDTO(event);
+        return new EventDTO(getEvent);
     }
 
     public List<EventDTO> getAllEventsByUsername(String username) throws WebApplicationException {
@@ -115,7 +116,7 @@ public class UserFacade {
 
         //check if user owns the event
         if (event.getUser().getUserName().equals(username)){
-            System.out.println("success. user connected to event");
+            System.out.println("success. user connected to table");
         } else {
             throw new WebApplicationException("You are not authenticated to perform the request");
         }
@@ -174,7 +175,7 @@ public class UserFacade {
 
         //check if user owns the person
         if (table.getEvent().getUser().getUserName().equals(username)){
-            System.out.println("success. user connected to event");
+            System.out.println("success. user connected to person");
         } else {
             throw new WebApplicationException("You are not authenticated to perform the request");
         }
@@ -202,11 +203,11 @@ public class UserFacade {
         try {
             person = em.find(Person.class,personId);
         } catch (WebApplicationException e){
-            throw new WebApplicationException("Could not find table with id: " + personId);
+            throw new WebApplicationException("Could not find person with id: " + personId);
         }
         //check if user owns the person
         if (person.getTables().getEvent().getUser().getUserName().equals(username)){
-            System.out.println("success. user connected to event");
+            System.out.println("success. user connected to person");
         } else {
             throw new WebApplicationException("You are not authenticated to perform the request");
         }
@@ -218,6 +219,88 @@ public class UserFacade {
             return new PersonDTO(person);
         } catch (NullPointerException | IllegalArgumentException ex) {
             throw new WebApplicationException("Could not delete, provided id: " + personId + " does not exist", 404);
+        } catch (RuntimeException ex) {
+            throw new WebApplicationException("Internal Server Problem. We are sorry for the inconvenience", 500);
+        } finally {
+            em.close();
+        }
+    }
+
+    public TablesDTO deleteTable(int tableId, String username) throws WebApplicationException {
+        EntityManager em = emf.createEntityManager();
+        Tables table;
+        //List<PersonDTO> personDTOS = getAllPersonsByTable(tableId);
+        try {
+            table = em.find(Tables.class,tableId);
+        } catch (WebApplicationException e){
+            throw new WebApplicationException("Could not find table with id: " + tableId);
+        }
+        //check if user owns the person
+        if (table.getEvent().getUser().getUserName().equals(username)){
+            System.out.println("success. user connected to table");
+        } else {
+            throw new WebApplicationException("You are not authenticated to perform the request");
+        }
+        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE p.tables.id = :tableId", Person.class);
+        query.setParameter("tableId", tableId);
+        List<Person> persons = query.getResultList();
+        try {
+            em.getTransaction().begin();
+            /*for (PersonDTO personDTO:personDTOS) {
+            Person person = new Person(personDTO.getName());
+            person.setId(personDTO.getId());
+            em.remove(person);
+        }*/
+            for (Person person:persons) {
+                em.remove(person);
+            }
+            em.remove(table);
+            em.getTransaction().commit();
+            //System.out.println(getAllPersonsByTable(person.getTables().getId()).size());
+            return new TablesDTO(table);
+        } catch (NullPointerException | IllegalArgumentException ex) {
+            throw new WebApplicationException("Could not delete, provided id: " + tableId + " does not exist", 404);
+        } catch (RuntimeException ex) {
+            throw new WebApplicationException("Internal Server Problem. We are sorry for the inconvenience", 500);
+        } finally {
+            em.close();
+        }
+    }
+
+    public EventDTO deleteEvent(String eventId, String username) throws WebApplicationException {
+        EntityManager em = emf.createEntityManager();
+        Event event;
+        try {
+            event = em.find(Event.class,eventId);
+        } catch (WebApplicationException e){
+            throw new WebApplicationException("Could not find event with id: " + eventId);
+        }
+        //check if user owns the person
+        if (event.getUser().getUserName().equals(username)){
+            System.out.println("success. user connected to event");
+        } else {
+            throw new WebApplicationException("You are not authenticated to perform the request");
+        }
+        TypedQuery<Tables> query = em.createQuery("SELECT t FROM Tables t WHERE t.event.id = :eventId", Tables.class);
+        query.setParameter("eventId", eventId);
+        List<Tables> tablesList = query.getResultList();
+        try {
+            em.getTransaction().begin();
+            for (Tables table:tablesList) {
+                TypedQuery<Person> personQuery = em.createQuery("SELECT p FROM Person p WHERE p.tables.id = :tableId", Person.class);
+                personQuery.setParameter("tableId", table.getId());
+                List<Person> persons = personQuery.getResultList();
+                for (Person person: persons) {
+                    em.remove(person);
+                }
+                em.remove(table);
+            }
+            em.remove(event);
+            em.getTransaction().commit();
+
+            return new EventDTO(event);
+        } catch (NullPointerException | IllegalArgumentException ex) {
+            throw new WebApplicationException("Could not delete, provided id: " + eventId + " does not exist", 404);
         } catch (RuntimeException ex) {
             throw new WebApplicationException("Internal Server Problem. We are sorry for the inconvenience", 500);
         } finally {

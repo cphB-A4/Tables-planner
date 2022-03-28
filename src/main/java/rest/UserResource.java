@@ -115,12 +115,40 @@ public class UserResource {
     @RolesAllowed("user")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String delete(@PathParam("id") int personId) {
+    public String deletePerson(@PathParam("id") int personId) {
         String thisUser;
         try {
             thisUser = securityContext.getUserPrincipal().getName();
             PersonDTO personDTO = userFacade.deletePerson(personId, thisUser);
             return gson.toJson(personDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
+        }
+    }
+    @Path("deleteTable/{id}")
+    @RolesAllowed("user")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String deleteTable(@PathParam("id") int tableId) {
+        String thisUser;
+        try {
+            thisUser = securityContext.getUserPrincipal().getName();
+            TablesDTO tablesDTO = userFacade.deleteTable(tableId, thisUser);
+            return gson.toJson(tablesDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
+        }
+    }
+    @Path("deleteEvent/{id}")
+    @RolesAllowed("user")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String deleteEvent(@PathParam("id") String eventId) {
+        String thisUser;
+        try {
+            thisUser = securityContext.getUserPrincipal().getName();
+            EventDTO eventDTO = userFacade.deleteEvent(eventId, thisUser);
+            return gson.toJson(eventDTO);
         } catch (WebApplicationException ex) {
             throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
         }
