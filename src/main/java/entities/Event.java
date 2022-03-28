@@ -22,7 +22,7 @@ public class Event {
     private String title;
     private String time;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Tables> tablesList;
 
     @ManyToOne
@@ -73,7 +73,13 @@ public class Event {
     public Event() {
     }
 
+    public List<Tables> getTablesList() {
+        return tablesList;
+    }
 
+    public void setTablesList(List<Tables> tablesList) {
+        this.tablesList = tablesList;
+    }
 
     public String getDescription() {
         return description;

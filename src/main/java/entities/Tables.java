@@ -21,7 +21,7 @@ public class Tables {
     @ManyToOne
     private Event event;
 
-    @OneToMany(mappedBy = "tables", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "tables", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Person> personList;
 
     public Tables(int size, String shape) {
@@ -29,6 +29,8 @@ public class Tables {
         this.shape = shape;
         this.personList = new ArrayList<>();
     }
+
+
 
     public Tables() {
     }

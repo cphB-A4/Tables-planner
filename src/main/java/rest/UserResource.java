@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.BigEventDTO;
 import dtos.EventDTO;
 import dtos.PersonDTO;
 import dtos.TablesDTO;
@@ -60,6 +61,14 @@ public class UserResource {
             String thisUser = securityContext.getUserPrincipal().getName();
             List<EventDTO> events = userFacade.getAllEventsByUsername(thisUser);
             return gson.toJson(events);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("event/{id}")
+    public String getEventByUser(@PathParam("id") String id) {
+        BigEventDTO eventDTO = userFacade.getEventById(id);
+        return gson.toJson(eventDTO);
     }
 
     //

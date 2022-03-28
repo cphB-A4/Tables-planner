@@ -2,6 +2,7 @@ package facades;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dtos.BigEventDTO;
 import dtos.EventDTO;
 import dtos.PersonDTO;
 import dtos.TablesDTO;
@@ -87,6 +88,32 @@ public class UserFacade {
         return new EventDTO(getEvent);
     }
 
+    public BigEventDTO getEventById(String eventId) throws WebApplicationException{
+        EntityManager em = emf.createEntityManager();
+        try {
+            Event event = em.find(Event.class, eventId);
+            List <TablesDTO> tablesDTOSList  = getAllTablessByEvent(event.getId());
+            List<TablesDTO> tablesList = new ArrayList<>();
+            List<PersonDTO> personDTOS = new ArrayList<>();
+            for (TablesDTO tables:tablesDTOSList
+                 ) {
+                personDTOS = getAllPersonsByTable(tables.getId());
+                tablesList.add(new TablesDTO(tables.getSize(), tables.getShape(), personDTOS));
+            }
+
+            BigEventDTO eventDTO = new BigEventDTO(event, tablesList);
+
+
+            return eventDTO;
+        } catch (NullPointerException ex) {
+            throw new WebApplicationException("No event with provided id: " + eventId, 404);
+        } catch (RuntimeException ex) {
+            throw new WebApplicationException("Internal Server Problem. We are sorry for the inconvenience", 500);
+        } finally {
+            em.close();
+        }
+    }
+
     public List<EventDTO> getAllEventsByUsername(String username) throws WebApplicationException {
         EntityManager em = emf.createEntityManager();
         try {
@@ -137,6 +164,24 @@ public class UserFacade {
         }
 
         return new TablesDTO(table);
+    }
+
+    public List<TablesDTO> getAllTablessByEvent(String eventId) throws WebApplicationException {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Tables> query = em.createQuery("SELECT t FROM Tables t WHERE t.event.id = :eventId", Tables.class);
+            query.setParameter("eventId", eventId);
+            List<Tables> tablesList = query.getResultList();
+            List<TablesDTO> tablesDTOS = new ArrayList<>();
+            for (Tables tables : tablesList) {
+                tablesDTOS.add(new TablesDTO(tables));
+            }
+            return tablesDTOS;
+        } catch (RuntimeException ex) {
+            throw new WebApplicationException(ex.getMessage(), 500);
+        } finally {
+            em.close();
+        }
     }
 
     public List<PersonDTO> getAllPersonsByTable(int tableId) throws WebApplicationException {

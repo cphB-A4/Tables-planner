@@ -1,16 +1,20 @@
 package dtos;
 
+import entities.Person;
 import entities.Tables;
+
+import java.util.List;
 
 public class TablesDTO {
     private Integer id;
     private int size;
     private String shape;
+    private List<PersonDTO> persons;
 
-    public TablesDTO(Integer id, int size, String shape) {
-        this.id = id;
+    public TablesDTO(int size, String shape, List<PersonDTO> persons) {
         this.size = size;
         this.shape = shape;
+        this.persons = persons;
     }
 
     public TablesDTO(Tables tables){
