@@ -21,9 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author lam@cphbusiness.dk
- */
 public class UserFacade {
 
     private static EntityManagerFactory emf;
@@ -32,11 +29,6 @@ public class UserFacade {
     private UserFacade() {
     }
 
-    /**
-     *
-     * @param _emf
-     * @return the instance of this facade.
-     */
     public static UserFacade getUserFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
@@ -352,4 +344,29 @@ public class UserFacade {
             em.close();
         }
     }
+
+    public EventDTO editEvent(EventDTO eventDTO, String eventID) throws WebApplicationException {
+        EntityManager em = emf.createEntityManager();
+
+        Event getEvent = em.find(Event.class, eventID);
+        try {
+            em.getTransaction().begin();
+
+            getEvent.setDescription(eventDTO.getDescription());
+            getEvent.setTitle(eventDTO.getTitle());
+            getEvent.setTime(eventDTO.getTime());
+
+            em.merge(getEvent);
+            em.getTransaction().commit();
+            return new EventDTO(getEvent);
+
+        } catch (RuntimeException ex) {
+            throw new WebApplicationException("Something went wrong", 500);
+        }
+        finally {
+            em.close();
+        }
+
+    }
 }
+

@@ -162,4 +162,18 @@ public class UserResource {
             throw new WebApplicationException(ex.getMessage(), ex.getResponse().getStatus());
         }
     }
+    @Path("/{id}")
+    @RolesAllowed("user")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String editDog(@PathParam("id") String eventID, String event) {
+        try {
+            EventDTO eventDTO = gson.fromJson(event, EventDTO.class);
+            eventDTO = userFacade.editEvent(eventDTO, eventID);
+            return gson.toJson(eventDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage());
+        }
+    }
 }
