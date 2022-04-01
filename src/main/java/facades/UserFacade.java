@@ -372,5 +372,30 @@ public class UserFacade {
         }
 
     }
+
+    //editTable(tablesDTO, tableID)
+    public TablesDTO editTable(TablesDTO tablesDTO, String tableID) throws WebApplicationException {
+        EntityManager em = emf.createEntityManager();
+
+
+        Tables table = em.find(Tables.class, Integer.parseInt(tableID));
+        try {
+            em.getTransaction().begin();
+
+            table.setShape(tablesDTO.getShape());
+            table.setSize(tablesDTO.getSize());
+
+            em.merge(table);
+            em.getTransaction().commit();
+            return new TablesDTO(table);
+
+        } catch (RuntimeException ex) {
+            throw new WebApplicationException("Something went wrong", 500);
+        }
+        finally {
+            em.close();
+        }
+
+    }
 }
 

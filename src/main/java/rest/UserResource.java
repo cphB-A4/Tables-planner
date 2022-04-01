@@ -6,6 +6,7 @@ import dtos.BigEventDTO;
 import dtos.EventDTO;
 import dtos.PersonDTO;
 import dtos.TablesDTO;
+import entities.Tables;
 import facades.AdminFacade;
 import facades.AllFacade;
 import facades.UserFacade;
@@ -136,7 +137,7 @@ public class UserResource {
     }
     @Path("deleteTable/{id}")
     @RolesAllowed("user")
-    @GET
+    @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public String deleteTable(@PathParam("id") int tableId) {
         String thisUser;
@@ -167,11 +168,27 @@ public class UserResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String editDog(@PathParam("id") String eventID, String event) {
+    public String editEvent(@PathParam("id") String eventID, String event) {
         try {
             EventDTO eventDTO = gson.fromJson(event, EventDTO.class);
             eventDTO = userFacade.editEvent(eventDTO, eventID);
             return gson.toJson(eventDTO);
+        } catch (WebApplicationException ex) {
+            throw new WebApplicationException(ex.getMessage());
+        }
+    }
+
+    @Path("table/{id}")
+    @RolesAllowed("user")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String editTable(@PathParam("id") String tableID, String table) {
+        try {
+            System.out.println("User Resource editTable" + table);
+            TablesDTO tablesDTO = gson.fromJson(table, TablesDTO.class);
+            tablesDTO = userFacade.editTable(tablesDTO, tableID);
+            return gson.toJson(tablesDTO);
         } catch (WebApplicationException ex) {
             throw new WebApplicationException(ex.getMessage());
         }
