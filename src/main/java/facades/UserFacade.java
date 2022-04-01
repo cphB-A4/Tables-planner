@@ -87,10 +87,14 @@ public class UserFacade {
             List <TablesDTO> tablesDTOSList  = getAllTablessByEvent(event.getId());
             List<TablesDTO> tablesList = new ArrayList<>();
             List<PersonDTO> personDTOS = new ArrayList<>();
+            if (tablesDTOSList.size() == 0 || tablesDTOSList == null){
+//for frontend to work. Might delete later. (Need to access person array)
+                tablesList.add(new TablesDTO(-1,-1,"",personDTOS));
+            }
             for (TablesDTO tables:tablesDTOSList
                  ) {
                 personDTOS = getAllPersonsByTable(tables.getId());
-                tablesList.add(new TablesDTO(tables.getSize(), tables.getShape(), personDTOS));
+                tablesList.add(new TablesDTO(tables.getId(),tables.getSize(), tables.getShape(), personDTOS));
             }
 
             BigEventDTO eventDTO = new BigEventDTO(event, tablesList);
