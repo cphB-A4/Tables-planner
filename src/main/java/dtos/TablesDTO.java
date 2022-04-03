@@ -56,4 +56,12 @@ public class TablesDTO {
     public void setShape(String shape) {
         this.shape = shape;
     }
+
+    public List<PersonDTO> getPersons() {
+        return persons;
+    }
+
+    public void setPersons(List<PersonDTO> persons) {
+        this.persons = persons;
+    }
 }
