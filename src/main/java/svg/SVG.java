@@ -9,7 +9,9 @@ public class SVG {
             "viewBox=\"%s\" " +
             "x=\"%d\"   " +
             "y=\"%d\"   " +
+            "xmlns=\"http://www.w3.org/2000/svg\"" +
             " preserveAspectRatio=\"xMinYMin\">";
+    //xmlns="http://www.w3.org/2000/svg
     private final String rectTemplate = "<rect x=\"%d\" y=\"%d\" height=\"%f\" width=\"%f\" style=\"stroke:#000000; fill: #ffffff\" />";
 
     public void addArrowAndText(int x1, int y1, int x2, int y2, int textX, int textY, int textToDisplay, StringBuilder svg) {

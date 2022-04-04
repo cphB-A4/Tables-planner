@@ -33,7 +33,8 @@ public class SVGResource {
         TablePlanSVG tablePlanSVG = new TablePlanSVG(0,0, "0 0 1000 900",100,100, bigEventDTO);
         //TablePlanSVG tablePlanSVG = svgFacade.tablesPlanAsSvg(bigEventDTO);
         String svg = tablePlanSVG.genarateSvg();
-        return "{\"msg\": \" " + svg + "\"}";
+        return svg;
+        //"{\"msg\": \"Hello to (User) User: " + thisuser + "\"}";
     }
     @GET
     @Produces(MediaType.APPLICATION_JSON)
