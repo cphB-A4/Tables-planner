@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.EventDTO;
 import entities.*;
 
 import io.restassured.RestAssured;
@@ -40,6 +41,8 @@ public class LoginEndpointTest {
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
     User user;
+    Event event;
+    Tables tables;
 
 
     static HttpServer startServer() {
@@ -80,19 +83,27 @@ public class LoginEndpointTest {
             em.createQuery("delete from User").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
 
-
+            em.createNamedQuery("Tables.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Event.deleteAllRows").executeUpdate();
 
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
             User testUser = new User("testUser","test");
             testUser.addRole(userRole);
-             user = new User("user", "test");
+            user = new User("user", "test");
             user.addRole(userRole);
             User admin = new User("admin", "test");
             admin.addRole(adminRole);
             User both = new User("user_admin", "test");
             both.addRole(userRole);
             both.addRole(adminRole);
+
+            event = new Event(user,"Hey", "Ayudi", "2022-03-24-12-00");
+            tables = new Tables(2, "round");
+
+            event.addTable(tables);
+
+            em.persist(event);
             em.persist(userRole);
             em.persist(adminRole);
             em.persist(user);
@@ -108,13 +119,10 @@ public class LoginEndpointTest {
                 //Instantiating the SimpleDateFormat class
                 SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                 //Parsing the given String to Date object
-
                 date = formatter.parse(date_string);
             } catch (NumberFormatException | ParseException e){
                 throw new NumberFormatException("format fejl");
             }
-
-
 
         } finally {
             em.close();
@@ -253,6 +261,37 @@ public class LoginEndpointTest {
                 .statusCode(403)
                 .body("code", equalTo(403))
                 .body("message", equalTo("Not authenticated - do login"));
+    }
+
+    @Test
+    public void testGetEventsByID() {
+        given().log().all().when().get("user/event/{id}", event.getId()).then().log().body();
+
+        given()
+                .contentType("application/json")
+                .get("user/event/{id}", event.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("title", equalTo(event.getTitle()));
+    }
+
+    @Test
+    public void createEvent() {
+        login("user","test");
+        EventDTO eventDTO = new EventDTO(user, "Ramadaen spis min bror", "konfirmation","2022-03-24-12-00");
+        String requestBody = new Gson().toJson(eventDTO);
+
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .and()
+                .body(requestBody)
+                .post("/user/createEvent")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("title", equalTo(eventDTO.getTitle()))
+                .body("description",equalTo(eventDTO.getDescription()));
     }
 
 }
