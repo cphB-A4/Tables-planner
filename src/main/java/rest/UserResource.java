@@ -67,7 +67,7 @@ public class UserResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("event/{id}")
-    public String getEventByUser(@PathParam("id") String id) {
+    public String getEventByID(@PathParam("id") String id) {
         BigEventDTO eventDTO = userFacade.getEventById(id);
         return gson.toJson(eventDTO);
     }

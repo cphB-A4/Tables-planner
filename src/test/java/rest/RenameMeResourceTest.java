@@ -1,6 +1,8 @@
 package rest;
 
-import entities.RenameMe;
+import com.google.gson.Gson;
+import dtos.EventDTO;
+import entities.*;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -27,10 +29,14 @@ public class RenameMeResourceTest {
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static RenameMe r1, r2;
+    private static Event event;
+    private static Tables tables;
+    private static User user;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
+
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -66,11 +72,19 @@ public class RenameMeResourceTest {
         EntityManager em = emf.createEntityManager();
         r1 = new RenameMe("Some txt", "More text");
         r2 = new RenameMe("aaa", "bbb");
+        Role userRole = new Role("user");
+        user = new User("user","test1");
+        event = new Event(user,"Hey", "Ayudi", "2022-03-24-12-00");
+        tables = new Tables(2, "round");
+        user.addRole(userRole);
+        event.addTable(tables);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Event.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
+            em.persist(event);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -101,5 +115,51 @@ public class RenameMeResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("count", equalTo(2));
+    }
+
+    @Test
+    public void testGetEventsByID() {
+        given().log().all().when().get("user/event/{id}", event.getId()).then().log().body();
+
+        given()
+                .contentType("application/json")
+                .get("user/event/{id}", event.getId()).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("title", equalTo(event.getTitle()));
+    }
+    //This is how we hold on to the token after login, similar to that a client must store the token somewhere
+    private static String securityToken;
+
+    //Utility method to login and set the returned securityToken
+    private static void login(String username, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", username, password);
+        securityToken = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("token");
+        //System.out.println("TOKEN ---> " + securityToken);
+    }
+
+    @Test
+    public void createEvent() {
+        login("user","test1");
+        EventDTO eventDTO = new EventDTO(user, "Ramadaen spis min bror", "konfirmation","2022-03-24-12-00");
+        String requestBody = new Gson().toJson(eventDTO);
+
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .and()
+                .body(requestBody)
+                .post("/user/createEvent")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("title", equalTo(eventDTO.getTitle()))
+                .body("description",equalTo(eventDTO.getDescription()));
     }
 }
