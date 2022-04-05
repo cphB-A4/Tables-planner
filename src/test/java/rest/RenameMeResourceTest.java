@@ -28,7 +28,6 @@ public class RenameMeResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
-    private static RenameMe r1, r2;
     private static Event event;
     private static Tables tables;
     private static User user;
@@ -58,9 +57,6 @@ public class RenameMeResourceTest {
 
     @AfterAll
     public static void closeTestServer() {
-        //System.in.read();
-
-        //Don't forget this, if you called its counterpart in @BeforeAll
         EMF_Creator.endREST_TestWithDB();
         httpServer.shutdownNow();
     }
@@ -70,8 +66,6 @@ public class RenameMeResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
-        r1 = new RenameMe("Some txt", "More text");
-        r2 = new RenameMe("aaa", "bbb");
         Role userRole = new Role("user");
         user = new User("user","test1");
         event = new Event(user,"Hey", "Ayudi", "2022-03-24-12-00");
@@ -82,8 +76,6 @@ public class RenameMeResourceTest {
             em.getTransaction().begin();
             em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
             em.createNamedQuery("Event.deleteAllRows").executeUpdate();
-            em.persist(r1);
-            em.persist(r2);
             em.persist(event);
             em.getTransaction().commit();
         } finally {
@@ -107,15 +99,6 @@ public class RenameMeResourceTest {
                 .body("msg", equalTo("Hello World"));
     }
 
-    @Test
-    public void testCount() throws Exception {
-        given()
-                .contentType("application/json")
-                .get("/xxx/count").then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("count", equalTo(2));
-    }
 
     @Test
     public void testGetEventsByID() {
@@ -141,7 +124,6 @@ public class RenameMeResourceTest {
                 .when().post("/login")
                 .then()
                 .extract().path("token");
-        //System.out.println("TOKEN ---> " + securityToken);
     }
 
     @Test
